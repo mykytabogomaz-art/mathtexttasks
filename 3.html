@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задачі - Урок 3</title>
+    <style>
+        body { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; background-color: #f0f8ff; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); max-width: 750px; width: 100%; text-align: center; }
+        .hint-box { background-color: #e3f2fd; border-left: 6px solid #2196f3; padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: left; font-size: 18px; color: #1565c0; }
+        .task-image { font-size: 60px; margin-bottom: 15px; min-height: 80px; display: flex; justify-content: center; align-items: center; }
+        .task-text { font-size: 22px; margin-bottom: 20px; font-weight: bold; color: #222; }
+        .example-group { margin-bottom: 20px; }
+        .example-group input { font-size: 24px; padding: 10px; width: 80%; max-width: 250px; text-align: center; border: 2px solid #ccc; border-radius: 8px; outline: none; }
+        .example-group input:focus { border-color: #4CAF50; }
+        .answer-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; background-color: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px dashed #bbb; margin-bottom: 25px; font-size: 20px; font-weight: bold; }
+        .answer-row select, .answer-row input { font-size: 18px; padding: 8px; border: 2px solid #ccc; border-radius: 8px; outline: none; font-family: inherit; }
+        .answer-row select:focus, .answer-row input:focus { border-color: #4CAF50; }
+        .answer-row input[type="number"] { width: 60px; text-align: center; }
+        button { background-color: #4CAF50; color: white; border: none; padding: 12px 40px; font-size: 22px; border-radius: 10px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        button:hover { background-color: #45a049; }
+        button:disabled { background-color: #a5d6a7; cursor: not-allowed; }
+        .feedback { margin-top: 20px; font-size: 22px; font-weight: bold; min-height: 35px; }
+        .correct { color: #4CAF50; }
+        .incorrect { color: #f44336; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #2196f3; text-decoration: none; font-size: 16px; font-weight: bold; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="math-game-root">
+    <a href="index.html" class="back-link">⬅️ На головне меню</a>
+    <h1>Урок 3</h1>
+    <div id="progress" style="color: #666; margin-bottom: 15px; font-size: 16px;">Завдання 1 з 5</div>
+    
+    <div class="hint-box">
+        <strong>💡 Запам'ятай правило:</strong><br>
+        Скільки <strong>всього/разом</strong> ➔ додавання (+)<br>
+        Скільки <strong>залишилось</strong> ➔ віднімання (-)
+    </div>
+
+    <div class="task-image" id="task-image"></div>
+    <div class="task-text" id="task-text">Завантаження...</div>
+    
+    <div class="example-group">
+        <label style="display:block; margin-bottom:8px; font-weight:bold; color: #444;">Приклад:</label>
+        <input type="text" id="answer-input" autocomplete="off" />
+    </div>
+
+    <div class="answer-row" id="dynamic-answer-row"></div>
+    
+    <button id="submit-btn">Перевірити</button>
+    <div class="feedback" id="feedback"></div>
+</div>
+
+<script>
+    const tasks = [
+        { 
+            text: "У гаражі стояло 4 автобуси і 5 легкових авто. Скільки всього машин у гаражі?", 
+            img: "🚌", expectedExample: "4+5=9",
+            sentenceParts: [
+                { type: "select", options: ["На стоянці", "У гаражі", "На дорозі"], correct: "У гаражі" },
+                { type: "select", options: ["залишилось", "поїхало", "всього"], correct: "всього" },
+                { type: "input", correct: "9" },
+                { type: "select", options: ["машин", "тракторів", "велосипедів"], correct: "машин" }
+            ]
+        },
+        { 
+            text: "На дереві висіло 9 яблук, 4 з них впали. Скільки яблук залишилось на дереві?", 
+            img: "🍏", expectedExample: "9-4=5",
+            sentenceParts: [
+                { type: "select", options: ["На дереві", "У кошику", "На траві"], correct: "На дереві" },
+                { type: "select", options: ["виросло", "стало", "залишилось"], correct: "залишилось" },
+                { type: "input", correct: "5" },
+                { type: "select", options: ["груш", "яблук", "слив"], correct: "яблук" }
+            ]
+        },
+        { 
+            text: "Бабуся спекла 6 пиріжків, а потім ще 4. Скільки всього пиріжків спекла бабуся?", 
+            img: "🥐", expectedExample: "6+4=10",
+            sentenceParts: [
+                { type: "select", options: ["У мами", "Бабуся", "На тарілці"], correct: "Бабуся" },
+                { type: "select", options: ["залишилось", "спекла", "всього",], correct: "спекла" },
+                { type: "input", correct: "10" },
+                { type: "select", options: ["млинців", "булочок", "пиріжків"], correct: "пиріжків" }
+            ]
+        },
+        { 
+            text: "У хлопчика було 10 наклейок, він подарував другу 3. Скільки наклейок залишилось у хлопчика?", 
+            img: "🏷️", expectedExample: "10-3=7",
+            sentenceParts: [
+                { type: "select", options: ["У дівчинки", "У хлопчика", "В альбомі"], correct: "У хлопчика" },
+                { type: "select", options: ["стало", "залишилось", "всього"], correct: "залишилось" },
+                { type: "input", correct: "7" },
+                { type: "select", options: ["зошитів", "наклейок", "карток"], correct: "наклейок" }
+            ]
+        },
+        { 
+            text: "У парку гуляло 3 песики, до них прибігло ще 4. Скільки всього песиків стало?", 
+            img: "🐕", expectedExample: "3+4=7",
+            sentenceParts: [
+                { type: "select", options: ["На вулиці", "У дворі", "У парку"], correct: "У парку" },
+                { type: "select", options: ["залишилось", "стало", "втекло"], correct: "стало" },
+                { type: "input", correct: "7" },
+                { type: "select", options: ["котиків", "песиків", "пташок"], correct: "песиків" }
+            ]
+        }
+    ];
+
+    let currentIndex = 0;
+    const imageEl = document.getElementById('task-image');
+    const taskTextEl = document.getElementById('task-text');
+    const inputEl = document.getElementById('answer-input');
+    const dynamicAnswerRowEl = document.getElementById('dynamic-answer-row');
+    const submitBtn = document.getElementById('submit-btn');
+    const feedbackEl = document.getElementById('feedback');
+    const progressEl = document.getElementById('progress');
+    const appEl = document.getElementById('math-game-root');
+
+    function loadTask() {
+        if (currentIndex >= tasks.length) {
+            appEl.innerHTML = '<a href="index.html" class="back-link">⬅️ На головне меню</a><div style="font-size:26px;color:#4CAF50; margin-top:20px;"><h1>Гарна робота! 🎉</h1><p>Ти вирішив усі задачі!</p></div>';
+            return;
+        }
+        const task = tasks[currentIndex];
+        imageEl.innerHTML = task.img;
+        taskTextEl.textContent = task.text;
+        inputEl.value = '';
+        inputEl.disabled = false;
+        feedbackEl.textContent = '';
+        progressEl.textContent = `Завдання ${currentIndex + 1} з ${tasks.length}`;
+        submitBtn.disabled = false;
+        
+        dynamicAnswerRowEl.innerHTML = '<span>Відповідь:</span>';
+        task.sentenceParts.forEach((part, index) => {
+            if (part.type === 'select') {
+                const selectEl = document.createElement('select');
+                selectEl.id = `sentence-part-${index}`;
+                selectEl.innerHTML = '<option value=""></option>';
+                part.options.forEach(opt => { selectEl.innerHTML += `<option value="${opt}">${opt}</option>`; });
+                dynamicAnswerRowEl.appendChild(selectEl);
+            } else if (part.type === 'input') {
+                const numInputEl = document.createElement('input');
+                numInputEl.type = 'number';
+                numInputEl.id = `sentence-part-${index}`;
+                numInputEl.addEventListener('keypress', function(e) { if (e.key === 'Enter') checkAnswer(); });
+                dynamicAnswerRowEl.appendChild(numInputEl);
+            }
+        });
+        inputEl.focus();
+    }
+
+    function checkAnswer() {
+        const task = tasks[currentIndex];
+        const userExample = inputEl.value.replace(/\s+/g, '');
+        let isExampleCorrect = false;
+        if (task.expectedExample.includes('+')) {
+            const parts = task.expectedExample.split('=');
+            if (parts.length === 2) {
+                const nums = parts[0].split('+');
+                if (nums.length === 2) {
+                    const altExpected = nums[1] + '+' + nums[0] + '=' + parts[1];
+                    if (userExample === task.expectedExample || userExample === altExpected) isExampleCorrect = true;
+                }
+            }
+        } else {
+            if (userExample === task.expectedExample) isExampleCorrect = true;
+        }
+
+        let isSentenceCorrect = true;
+        task.sentenceParts.forEach((part, index) => {
+            const el = document.getElementById(`sentence-part-${index}`);
+            if (el.value.trim() !== part.correct) isSentenceCorrect = false;
+        });
+
+        if (isExampleCorrect && isSentenceCorrect) {
+            feedbackEl.textContent = 'Правильно! Молодець! 🌟';
+            feedbackEl.className = 'feedback correct';
+            inputEl.disabled = true;
+            submitBtn.disabled = true;
+            task.sentenceParts.forEach((_, index) => { document.getElementById(`sentence-part-${index}`).disabled = true; });
+            setTimeout(() => { currentIndex++; loadTask(); }, 1500);
+        } else {
+            feedbackEl.textContent = 'Спробуй ще раз!';
+            feedbackEl.className = 'feedback incorrect';
+        }
+    }
+
+    submitBtn.addEventListener('click', checkAnswer);
+    inputEl.addEventListener('keypress', function(e) { if (e.key === 'Enter') checkAnswer(); });
+    loadTask();
+</script>
+</body>
+</html>
