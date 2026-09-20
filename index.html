@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математика - Головне меню</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #2196f3;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        p.subtitle {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .menu-btn {
+            display: block;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            font-size: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background-color 0.3s;
+        }
+        .menu-btn:hover {
+            background-color: #45a049;
+            transform: scale(1.02);
+        }
+        .menu-btn span {
+            font-size: 28px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Тренажер Задач 🧮</h1>
+   
+    
+    <div class="menu-grid">
+        <a href="1.html" class="menu-btn"> Задачі 1</a>
+        <a href="2.html" class="menu-btn" style="background-color: #FF9800;"> Задачі 2</a>
+        <a href="3.html" class="menu-btn" style="background-color: #2196F3;"> Задачі 3</a>
+        <a href="4.html" class="menu-btn" style="background-color: #9C27B0;"> Задачі 4</a>
+        <a href="5.html" class="menu-btn" style="background-color: #E91E63;"> Задачі 5</a>
+    </div>
+</div>
+
+</body>
+</html>
